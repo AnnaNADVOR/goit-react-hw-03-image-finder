@@ -12,15 +12,14 @@ class Searchbar extends Component {
         event.preventDefault(); 
 
         if (this.state.searchQuery.trim() === "") {
-             toast.error("Error Notification !")
-            return;
+           return toast.error("Enter you serch therm!");
         }
 
         this.props.submit(this.state.searchQuery);
 
-        this.setState({
-            searchQuery: "",
-        })
+        // this.setState({
+        //     searchQuery: "",
+        // })
     }
 
     onInputChange = event => {

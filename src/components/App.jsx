@@ -1,69 +1,105 @@
 import { Component } from "react";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import axios from 'axios';
+
 
 import Searchbar from "./Searchbar/Searchbar";
-import ImageGalleryItem from "./ImageGalleryItem/ImageGalleryItem";
+import ImageGallery from "./ImageGallery/ImageGallery/ImageGallery";
+import Loader from "./Loader/Loader";
+import LoadMoreButton from "./LoadMoreButton/LoadMoreButton";
+import Error from "./Error/Error"
+
+import fetchGallery from "services/gallery.api";
 
 class App extends Component {
   state = {
-    searchQuery: "",
+    searchQuery: '',
     page: 1, 
-    loading: false,
+    totalImages: 0,
     images: [], 
-    
+    error: null,
+    loading: false,    
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    // console.log("update")
-    // console.log(this.state.searchQuery , prevState.searchQuery  )
+  componentDidUpdate(_, prevState) {
     
-    if (this.state.searchQuery !== prevState.searchQuery) {
-      this.setState({ loading: true });
-      console.log("to", this.state.loading)
-      const API_KEY = "39912863-1650dbe31ef88f10e118c8e6a";
-      const URL = `https://pixabay.com/api/?q=${this.searchQuery}&page=${this.page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
+    const { searchQuery, page } = this.state;
 
+    if (searchQuery !== prevState.searchQuery) {
+      this.setState({ loading: true, images: [], error: null, page: 1 });
+    }
     
-      axios.get(URL)
-        .then(response => this.setState({ images: response.data.hits }))
-        .catch(function (error) {
-   
-          console.log(error);
+    if (searchQuery !== prevState.searchQuery || page !== prevState.page) {
+           
+    fetchGallery(searchQuery, page)
+        .then(data => {
+          if (data.hits.length === 0) {
+            this.setState({ error: 'No items found! Enter other serch therm.', totalImages: 0, });
+            return;
+          }
+
+          if (page === 1) {
+            this.setState({images: [...data.hits],  totalImages: data.totalHits,});   
+            toast.info(`Found ${data.totalHits} items.`);
+            return;
+          }
+
+          this.setState(() => ({         
+            images: [...prevState.images, ...data.hits],
+            totalImages: data.totalHits
+            }  
+          ))          
+
+       
         })
-        .finally(() => {
-          this.setState({ loading: false }); 
-          console.log("after",this.state.loading)
-        } 
-
-          
-      )
-    
-      
+        
+        .catch(error => this.setState({ error: 'Oops! Something went wrong. Try again.' }))
+        .finally(() => this.setState({ loading: false }));      
     }
   }
-  
 
 
 
   getSearchQuery = (value) => {
-    
-    this.setState({
+      this.setState({
       searchQuery: value, 
     })
   }
 
+  renderMorePhotos = () => {
+  
+    this.setState(prevState => ({ page: prevState.page + 1, }));
+   
+    
+  }
+
+  showLoadMoreButton() {
+    const { page, totalImages } = this.state;
+
+    if (page < Math.ceil(totalImages / 12)) {
+      
+      return true;
+  }
+
+  
+  }
+  
 
   render() {
-    const { searchQuery, loading, images } = this.state;
-
+    const { searchQuery, images, error, loading } = this.state;
+    const isShowButtom = this.showLoadMoreButton();
     return (
       <div>
         <Searchbar submit={this.getSearchQuery} />
-        {loading === true && <div>Load</div>}
-        {searchQuery === "" && <div>to start a search, enter a keyword in the search field</div>}
-        {images.length > 0 && <ImageGalleryItem/>}
+        {error && <Error>{error}</Error>}
+        
+        {loading && <Loader/>}
+        {searchQuery === "" && <div>Enter a keyword to find photos</div>}
+        {images.length > 0 && <ImageGallery photos={images} />}
+        {isShowButtom && !error && !loading && <LoadMoreButton click={ this.renderMorePhotos} />}
+
+        
+       
         
         <ToastContainer autoClose={3000}/>
       </div>
