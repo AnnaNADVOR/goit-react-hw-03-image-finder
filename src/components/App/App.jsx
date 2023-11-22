@@ -86,7 +86,7 @@ class App extends Component {
         {images.length > 0 && <ImageGallery photos={images} />}
         {isShowButtom && !error && !loading && <LoadMoreButton click={ this.renderMorePhotos} />}    
                
-        <ToastContainer autoClose={3000}/>
+        <ToastContainer autoClose={2000}/>
       </Container>
     )
   }
