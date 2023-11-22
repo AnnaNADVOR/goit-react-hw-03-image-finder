@@ -17,5 +17,6 @@ export const LoaderContainer = styled.div`
 
 `
 export const Info = styled.p`
-    font-size: 20px;     
+    font-size: 20px; 
+    text-align: center;    
 `

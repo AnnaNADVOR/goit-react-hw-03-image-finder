@@ -4,6 +4,7 @@ export const NotificationContainer = styled.div`
     display:flex; 
     flex-direction: column;
     align-items: center; 
+    text-align: center;
     padding: 60px; 
     font-size: 30px; 
     justify-content: center;
