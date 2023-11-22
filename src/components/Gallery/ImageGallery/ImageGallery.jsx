@@ -1,10 +1,9 @@
-import ImageGalleryItem from '../../ImageGalleryItem/ImageGalleryItem';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
+import {GalleryList  } from './ImageGallery.styled'
 
 function ImageGallery ({ photos }) {
     return (
-        <ul style={{
-            display: 'inline-flex', flexWrap: "wrap", gap: "20px"
-        }}>
+        <GalleryList >
             {photos.map(photo => 
                 <ImageGalleryItem
                     key={photo.id}
@@ -13,8 +12,7 @@ function ImageGallery ({ photos }) {
                     largeImageURL={photo.largeImageURL}
                     />
             )}
-
-        </ul>
+        </GalleryList>
     )
 }
 

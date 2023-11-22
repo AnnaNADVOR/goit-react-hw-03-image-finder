@@ -2,13 +2,14 @@ import { Component } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
+import Searchbar from "../Gallery/Searchbar/Searchbar";
+import ImageGallery from "../Gallery/ImageGallery/ImageGallery";
+import Loader from "../Gallery/Loader/Loader";
+import LoadMoreButton from "../Gallery/LoadMoreButton/LoadMoreButton";
+import Error from "../Gallery/Error/Error";
+import Notification from '../Gallery/Notification/Notification';
 
-import Searchbar from "./Searchbar/Searchbar";
-import ImageGallery from "./ImageGallery/ImageGallery/ImageGallery";
-import Loader from "./Loader/Loader";
-import LoadMoreButton from "./LoadMoreButton/LoadMoreButton";
-import Error from "./Error/Error"
-
+import { Container } from './App.styled';
 import fetchGallery from "services/gallery.api";
 
 class App extends Component {
@@ -22,7 +23,6 @@ class App extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    
     const { searchQuery, page } = this.state;
 
     if (searchQuery !== prevState.searchQuery) {
@@ -48,17 +48,12 @@ class App extends Component {
             images: [...prevState.images, ...data.hits],
             totalImages: data.totalHits
             }  
-          ))          
-
-       
+          ))    
         })
-        
         .catch(error => this.setState({ error: 'Oops! Something went wrong. Try again.' }))
         .finally(() => this.setState({ loading: false }));      
     }
   }
-
-
 
   getSearchQuery = (value) => {
       this.setState({
@@ -67,42 +62,32 @@ class App extends Component {
   }
 
   renderMorePhotos = () => {
-  
-    this.setState(prevState => ({ page: prevState.page + 1, }));
-   
-    
+    this.setState(prevState => ({ page: prevState.page + 1, }));  
   }
 
   showLoadMoreButton() {
     const { page, totalImages } = this.state;
-
     if (page < Math.ceil(totalImages / 12)) {
-      
-      return true;
-  }
-
-  
+        return true;
+    }  
   }
   
 
   render() {
     const { searchQuery, images, error, loading } = this.state;
     const isShowButtom = this.showLoadMoreButton();
+
     return (
-      <div>
+      <Container>
         <Searchbar submit={this.getSearchQuery} />
         {error && <Error>{error}</Error>}
-        
         {loading && <Loader/>}
-        {searchQuery === "" && <div>Enter a keyword to find photos</div>}
+        {searchQuery === "" && <Notification>Enter a keyword to find photos.</Notification>}
         {images.length > 0 && <ImageGallery photos={images} />}
-        {isShowButtom && !error && !loading && <LoadMoreButton click={ this.renderMorePhotos} />}
-
-        
-       
-        
+        {isShowButtom && !error && !loading && <LoadMoreButton click={ this.renderMorePhotos} />}    
+               
         <ToastContainer autoClose={3000}/>
-      </div>
+      </Container>
     )
   }
 

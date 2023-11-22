@@ -1,7 +1,14 @@
 import { BiSearchAlt } from "react-icons/bi";
 import { toast } from 'react-toastify';
-
 import { Component } from "react";
+
+import {
+    Header,
+    SearchForm,
+    SearchField,
+    SearchButton,
+
+} from "./Searchbar.styled";
 
 class Searchbar extends Component {
     state = {
@@ -28,24 +35,22 @@ class Searchbar extends Component {
             searchQuery: normaliseQuery,
         })
     }
-
-    
-    
+  
     render() {
         return(
-            <header>
-                <form onSubmit={this.onSubmitForm}>
-                    <input      
-                    type="text"                                     
-                    placeholder="Search images and photos"
-                    value={this.state.searchQuery}
-                    onChange={this.onInputChange}
+            <Header>
+                <SearchForm  onSubmit={this.onSubmitForm}>
+                    <SearchField     
+                        type="text"                                     
+                        placeholder="Search images and photos"
+                        value={this.state.searchQuery}
+                        onChange={this.onInputChange}
                      />
-                    <button type="submit">
-                    <span><BiSearchAlt /></span>
-                    </button>
-                </form>
-            </header>
+                    <SearchButton type="submit">
+                        <BiSearchAlt />
+                    </SearchButton>
+                </SearchForm >
+            </Header>
         )
     }
 
