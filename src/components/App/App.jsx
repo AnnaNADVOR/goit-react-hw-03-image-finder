@@ -24,11 +24,7 @@ class App extends Component {
 
   componentDidUpdate(_, prevState) {
     const { searchQuery, page } = this.state;
-
-    if (searchQuery !== prevState.searchQuery) {
-      this.setState({ loading: true, images: [], error: null, page: 1 });
-    }
-    
+   
     if (searchQuery !== prevState.searchQuery || page !== prevState.page) {
            
     fetchGallery(searchQuery, page)
@@ -56,23 +52,31 @@ class App extends Component {
   }
 
   getSearchQuery = (value) => {
-      this.setState({
+    if (this.state.searchQuery === value) {
+      return;
+    }
+    this.setState({
+      page: 1, 
       searchQuery: value, 
+      loading: true,
+      error: null,
+      images: [],
+        
     })
   }
 
   renderMorePhotos = () => {
-    this.setState(prevState => ({ page: prevState.page + 1, }));  
+    this.setState(prevState => ({ page: prevState.page + 1}));  
   }
 
   showLoadMoreButton() {
     const { page, totalImages } = this.state;
+
     if (page < Math.ceil(totalImages / 12)) {
         return true;
-    }  
+    }     
   }
   
-
   render() {
     const { searchQuery, images, error, loading } = this.state;
     const isShowButtom = this.showLoadMoreButton();
@@ -84,7 +88,7 @@ class App extends Component {
         {loading && <Loader/>}
         {searchQuery === "" && <Notification>Enter a keyword to find photos.</Notification>}
         {images.length > 0 && <ImageGallery photos={images} />}
-        {isShowButtom && !error && !loading && <LoadMoreButton click={ this.renderMorePhotos} />}    
+        {isShowButtom && !error && !loading && <LoadMoreButton click={this.renderMorePhotos} />}    
                
         <ToastContainer autoClose={2000}/>
       </Container>

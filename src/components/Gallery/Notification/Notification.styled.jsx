@@ -5,10 +5,9 @@ export const NotificationContainer = styled.div`
     flex-direction: column;
     align-items: center; 
     text-align: center;
-    padding: 60px; 
     font-size: 30px; 
     justify-content: center;
-
+  
     &>svg {
         width: 60px; 
         height: 60px; 
